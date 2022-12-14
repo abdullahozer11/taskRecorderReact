@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import TaskList from "./TaskList";
 
 
 class Board extends Component {
@@ -11,13 +12,11 @@ class Board extends Component {
 
     render() {
         return (
-            <div>
-                {/*todo add card for task board*/}
-            </div>
+            <>
+                <TaskList/>
+            </>
         );
     }
 }
-
-Board.propTypes = {};
 
 export default Board;
