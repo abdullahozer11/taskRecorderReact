@@ -15,15 +15,20 @@
 }
 
 .delete-task-button {
+    margin-left: 20px;
+}
+
+.button-wrapper {
     margin-top: auto;
     margin-bottom: auto;
     margin-left: auto;
+    width: 30px;
 }
 
 .delete-task-button:hover {
     color: #fa0d0d;
     /*  Making button bigger on hover  */
-    transform: scale(1.2) perspective(1px)
+    transform: scale(1.3) perspective(1px)
 }
 
 .card-body {

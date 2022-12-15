@@ -109,7 +109,7 @@ class TaskList extends Component {
         // Toggle the 'completed' class on the list item
         listItem.classList.toggle('completed');
 
-        const sortedTasks =  this.state.tasks.sort((a, b) => {
+        const sortedTasks = this.state.tasks.sort((a, b) => {
             if (a.isCompleted && !b.isCompleted) {
                 return 1;
             } else if (!a.isCompleted && b.isCompleted) {
@@ -188,9 +188,12 @@ class TaskList extends Component {
                                                                         {task.desc}
                                                                         <i className="input-helper"></i></label>
                                                                 </div>
-                                                                <i onClick={() => this.terminateTask(task.id)}
-                                                                   className="fa fa-trash delete-task-button"
-                                                                   aria-hidden="true"></i>
+                                                                <div className="button-wrapper">
+                                                                    <i onClick={() => this.terminateTask(task.id)}
+                                                                       className="fa fa-trash fa-lg delete-task-button"
+                                                                       aria-hidden="true">
+                                                                    </i>
+                                                                </div>
                                                             </li>
                                                         </ListGroup.Item>
                                                     ))}
