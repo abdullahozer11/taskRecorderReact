@@ -20,6 +20,12 @@
     margin-left: auto;
 }
 
+.delete-task-button:hover {
+    color: #fa0d0d;
+    /*  Making button bigger on hover  */
+    transform: scale(1.2) perspective(1px)
+}
+
 .card-body {
     margin: auto;
 }
