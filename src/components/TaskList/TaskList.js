@@ -164,7 +164,7 @@ class TaskList extends Component {
                                       value={this.state.newTaskDescription}
                                       onChange={this.handleTaskDescriptionChange}/>
                             <br/>
-                            <button type="submit" className="card-link btn btn-primary">Create</button>
+                            <button id="task-add-button" type="submit" className="card-link btn btn-primary">Add</button>
                         </form>
                     </div>
                 </div>
