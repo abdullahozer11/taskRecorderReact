@@ -11,21 +11,20 @@ class TaskList extends Component {
             tasks: [
                 {
                     id: 1,
-                    title: "Wash Car",
                     desc: "Vehicle needs serious cleaning including with sprays and sponges.",
+                    isCompleted: false,
                 },
                 {
                     id: 2,
-                    title: "Fix Computer",
                     desc: "Computer needs opening and dusting inside.",
+                    isCompleted: false,
                 },
                 {
                     id: 3,
-                    title: "Read Book",
                     desc: "Dune needs to be finished. Read the damn book.",
+                    isCompleted: false,
                 },
             ],
-            newTaskTitle: '',
             newTaskDescription: '',
         };
     };
@@ -85,21 +84,6 @@ class TaskList extends Component {
         this.setState({tasks});
     };
 
-    postponeTask = (id) => {
-        // Create a shallow copy of the list of tasks
-        const tasksCopy = [...this.state.tasks];
-        // Determine the index of the item to remove
-        const index = tasksCopy.findIndex((item) => item.id === id);
-        // Remove the item from the copied list
-        const [removed] = tasksCopy.splice(index, 1);
-        // Add the removed item back to the end of the copied list
-        tasksCopy.push(removed);
-        // Update the component's state with the modified list of tasks
-        this.setState({
-            tasks: tasksCopy,
-        });
-    };
-
     handleSubmit = (event) => {
         // prevent default form submission behavior
         event.preventDefault();
@@ -107,35 +91,54 @@ class TaskList extends Component {
         this.addTask();
     };
 
-    handleTaskTitleChange = (event) => {
-        // Update the value of the taskTitle state property with the value from the input field
-        this.setState({newTaskTitle: event.target.value});
-    };
-
     handleTaskDescriptionChange = (event) => {
         // Update the value of the taskDescription state property with the value from the input field
         this.setState({newTaskDescription: event.target.value});
     };
 
+    toggleCheckbox(event, id) {
+        const element = event.target;
+        // Find the task with the specified id in the tasks list
+        const task = this.state.tasks.find(task => task.id === id);
+        // If the task was found, toggle its 'completed' property
+        if (task) {
+            task.isCompleted = !task.isCompleted;
+        };
+        // Find the closest parent element with the 'li' tag
+        const listItem = element.closest("li");
+        // Toggle the 'completed' class on the list item
+        listItem.classList.toggle('completed');
+
+        const sortedTasks =  this.state.tasks.sort((a, b) => {
+            if (a.isCompleted && !b.isCompleted) {
+                return 1;
+            } else if (!a.isCompleted && b.isCompleted) {
+                return -1;
+            }
+            return 0;
+        });
+        this.setState({
+            tasks: sortedTasks,
+        });
+    };
+
     addTask = () => {
         // shallow copy of the tasks list
         const tasksCopy = [...this.state.tasks];
-        // check if new task title and new task description data are not empty
-        if (this.state.newTaskTitle.length && this.state.newTaskDescription.length) {
+        // check if new task description data are not empty
+        if (this.state.newTaskDescription.length) {
             // create a new task object using the current state
             const newTask = {
                 id: tasksCopy.length + 1,
-                title: this.state.newTaskTitle,
                 desc: this.state.newTaskDescription,
             };
 
             // add the new task to the tasks list
-            tasksCopy.push(newTask);
+            tasksCopy.unshift(newTask);
 
             // update the state with the new tasks list
             this.setState({
                 tasks: tasksCopy,
-                newTaskTitle: '',
                 newTaskDescription: '',
             });
         }
@@ -145,51 +148,65 @@ class TaskList extends Component {
         const tasks = this.state.tasks;
         return (
             <>
-                <ListGroup>
-                    {tasks.map((task) => (
-                        <ListGroup.Item
-                            key={task.id}
-                            draggable
-                            onDragStart={(event) => this.dragStart(event, task.id)}
-                            onDragOver={this.dragOver}
-                            onDrop={(event) => this.drop(event, task.id)}
-                        >
-                            <div className="card">
-                                <div key={task.id} className="card-body">
-                                    <h5 className="card-title">{task.title}</h5>
-                                    <p className="card-text">
-                                        {task.desc}
-                                    </p>
-                                    <button onClick={() => this.postponeTask(task.id)}
-                                            className="card-link btn btn-secondary">Postpone
-                                    </button>
-                                    <button onClick={() => this.terminateTask(task.id)}
-                                            className="card-link btn btn-dark">Done
-                                    </button>
+                <div className="page-content page-container" id="page-content">
+                    <div className="padding">
+                        <div className="row container d-flex justify-content-center">
+                            <div className="col-md-12">
+                                <div className="card px-3">
+                                    <div className="card-body">
+                                        <h4 className="card-title">Task List</h4>
+                                        <div className="add-items d-flex">
+                                            <input type="text"
+                                                   className="form-control todo-list-input"
+                                                   placeholder="What do you need to do today?"
+                                                   onChange={this.handleTaskDescriptionChange}
+                                                   value={this.state.newTaskDescription}
+                                            />
+                                            <button
+                                                onClick={this.handleSubmit}
+                                                className="add btn btn-primary font-weight-bold todo-list-add-btn">Add
+                                            </button>
+                                        </div>
+                                        <div className="list-wrapper">
+                                            <ul className="d-flex flex-column-reverse todo-list">
+                                                <ListGroup>
+                                                    {tasks.map((task) => (
+                                                        <ListGroup.Item
+                                                            key={task.id}
+                                                            draggable
+                                                            onDragStart={(event) => this.dragStart(event, task.id)}
+                                                            onDragOver={this.dragOver}
+                                                            onDrop={(event) => this.drop(event, task.id)}
+                                                        >
+                                                            <li key={task.id}>
+                                                                <div className="form-check">
+                                                                    <label className="form-check-label">
+                                                                        <input className="checkbox"
+                                                                               type="checkbox"
+                                                                               onChange={(event) => this.toggleCheckbox(event, task.id)}
+                                                                        />
+                                                                        {task.desc}
+                                                                        <i className="input-helper"></i></label>
+                                                                </div>
+                                                                <i onClick={() => this.terminateTask(task.id)}
+                                                                   className="fa fa-trash delete-task-button"
+                                                                   aria-hidden="true"></i>
+                                                            </li>
+                                                        </ListGroup.Item>
+                                                    ))}
+                                                </ListGroup>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-
-                <div className="card">
-                    <div className="card-body">
-                        <form onSubmit={this.handleSubmit}>
-                            <input type="text" id="task-title" className="card-text" placeholder={"Task Title"}
-                                   value={this.state.newTaskTitle}
-                                   onChange={this.handleTaskTitleChange}/>
-                            <br/>
-                            <textarea id="task-description" className="card-text" placeholder={"Task Description"}
-                                      value={this.state.newTaskDescription}
-                                      onChange={this.handleTaskDescriptionChange}/>
-                            <br/>
-                            <button id="task-add-button" type="submit" className="card-link btn btn-primary">Add</button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </>
         );
-    };
+    }
+    ;
 }
 
 export default TaskList;
