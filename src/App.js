@@ -1,13 +1,11 @@
 import './App.css';
-import Header from './components/Header/Header';
-import Board from './components/Board/Board';
+import TaskList from './components/TaskList/TaskList';
 
 
 function App() {
     return (
         <div className="App">
-            <Header/>
-            <Board/>
+            <TaskList/>
         </div>
     );
 }
