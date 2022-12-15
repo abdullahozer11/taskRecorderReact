@@ -30,6 +30,25 @@ class TaskList extends Component {
         };
     };
 
+    // Add an event listener for keyboard events
+    componentDidMount = () => {
+        window.addEventListener('keydown', this.handleKeyDown);
+    }
+
+    // Remove the event listener when the component unmounts
+    componentWillUnmount = () => {
+        window.removeEventListener('keydown', this.handleKeyDown);
+    }
+
+    // This function will be called whenever a keyboard event occurs
+    handleKeyDown = (event) => {
+        // Check if the key pressed was the enter key
+        if (event.key === 'Enter') {
+            // Trigger the desired behavior for the button here
+            this.addTask();
+        }
+    }
+
     dragStart(event, id) {
         // remember source tasks id
         event.dataTransfer.setData('id', id);
