@@ -208,8 +208,7 @@ class TaskList extends Component {
                 </div>
             </>
         );
-    }
-    ;
-}
+    };
+};
 
 export default TaskList;
