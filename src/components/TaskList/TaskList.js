@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {ListGroup} from 'react-bootstrap';
 
+import './TaskList.css';
 
 class TaskList extends Component {
     constructor(props) {
@@ -23,7 +24,9 @@ class TaskList extends Component {
                     title: "Read Book",
                     desc: "Dune needs to be finished. Read the damn book.",
                 },
-            ]
+            ],
+            newTaskTitle: '',
+            newTaskDescription: '',
         };
     };
 
@@ -37,7 +40,7 @@ class TaskList extends Component {
         event.preventDefault();
     };
 
-    drop(event, targetId) {
+    drop = (event, targetId) => {
         // get initial task's id
         const id = event.dataTransfer.getData('id');
         // shallow copy the tasks list
@@ -56,11 +59,67 @@ class TaskList extends Component {
         });
     };
 
-    terminateTask(id) {
+    terminateTask = (id) => {
         // remove the task by filtering the tasks
         const tasks = this.state.tasks.filter((t) => t.id !== id);
         // set back the tasks in state
         this.setState({tasks});
+    };
+
+    postponeTask = (id) => {
+        // Create a shallow copy of the list of tasks
+        const tasksCopy = [...this.state.tasks];
+        // Determine the index of the item to remove
+        const index = tasksCopy.findIndex((item) => item.id === id);
+        // Remove the item from the copied list
+        const [removed] = tasksCopy.splice(index, 1);
+        // Add the removed item back to the end of the copied list
+        tasksCopy.push(removed);
+        // Update the component's state with the modified list of tasks
+        this.setState({
+            tasks: tasksCopy,
+        });
+    };
+
+    handleSubmit = (event) => {
+        // prevent default form submission behavior
+        event.preventDefault();
+
+        this.addTask();
+    };
+
+    handleTaskTitleChange = (event) => {
+        // Update the value of the taskTitle state property with the value from the input field
+        this.setState({newTaskTitle: event.target.value});
+    };
+
+    handleTaskDescriptionChange = (event) => {
+        // Update the value of the taskDescription state property with the value from the input field
+        this.setState({newTaskDescription: event.target.value});
+    };
+
+    addTask = () => {
+        // shallow copy of the tasks list
+        const tasksCopy = [...this.state.tasks];
+        // check if new task title and new task description data are not empty
+        if (this.state.newTaskTitle.length && this.state.newTaskDescription.length) {
+            // create a new task object using the current state
+            const newTask = {
+                id: tasksCopy.length + 1,
+                title: this.state.newTaskTitle,
+                desc: this.state.newTaskDescription,
+            };
+
+            // add the new task to the tasks list
+            tasksCopy.push(newTask);
+
+            // update the state with the new tasks list
+            this.setState({
+                tasks: tasksCopy,
+                newTaskTitle: '',
+                newTaskDescription: '',
+            });
+        }
     };
 
     render() {
@@ -86,30 +145,31 @@ class TaskList extends Component {
                                             className="card-link btn btn-secondary">Postpone
                                     </button>
                                     <button onClick={() => this.terminateTask(task.id)}
-                                            className="card-link btn btn-primary">Done
+                                            className="card-link btn btn-dark">Done
                                     </button>
                                 </div>
                             </div>
                         </ListGroup.Item>
                     ))}
                 </ListGroup>
+
+                <div className="card">
+                    <div className="card-body">
+                        <form onSubmit={this.handleSubmit}>
+                            <input type="text" id="task-title" className="card-text" placeholder={"Task Title"}
+                                   value={this.state.newTaskTitle}
+                                   onChange={this.handleTaskTitleChange}/>
+                            <br/>
+                            <textarea id="task-description" className="card-text" placeholder={"Task Description"}
+                                      value={this.state.newTaskDescription}
+                                      onChange={this.handleTaskDescriptionChange}/>
+                            <br/>
+                            <button type="submit" className="card-link btn btn-primary">Create</button>
+                        </form>
+                    </div>
+                </div>
             </>
         );
-    }
-
-    postponeTask(id) {
-        // Create a shallow copy of the list of tasks
-        const tasksCopy = [...this.state.tasks];
-        // Determine the index of the item to remove
-        const index = tasksCopy.findIndex((item) => item.id === id);
-        // Remove the item from the copied list
-        const [removed] = tasksCopy.splice(index, 1);
-        // Add the removed item back to the end of the copied list
-        tasksCopy.push(removed);
-        // Update the component's state with the modified list of tasks
-        this.setState({
-            tasks: tasksCopy,
-        });
     };
 }
 
