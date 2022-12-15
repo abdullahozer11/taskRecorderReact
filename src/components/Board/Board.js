@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import TaskList from "./TaskList";
+import TaskList from "../TaskList/TaskList";
 
 
 class Board extends Component {
