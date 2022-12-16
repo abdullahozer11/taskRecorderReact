@@ -29,8 +29,8 @@ class TaskList extends Component {
         };
     };
 
-    // Add an event listener for keyboard events
     componentDidMount = () => {
+        // Add an event listener for keyboard events
         window.addEventListener('keydown', this.handleKeyDown);
     }
 
@@ -103,7 +103,8 @@ class TaskList extends Component {
         // If the task was found, toggle its 'completed' property
         if (task) {
             task.isCompleted = !task.isCompleted;
-        };
+        }
+
         // Find the closest parent element with the 'li' tag
         const listItem = element.closest("li");
         // Toggle the 'completed' class on the list item
@@ -135,7 +136,6 @@ class TaskList extends Component {
 
             // add the new task to the tasks list
             tasksCopy.unshift(newTask);
-
             // update the state with the new tasks list
             this.setState({
                 tasks: tasksCopy,
@@ -209,6 +209,6 @@ class TaskList extends Component {
             </>
         );
     };
-};
+}
 
 export default TaskList;
