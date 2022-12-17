@@ -1,13 +1,12 @@
 import React from "react";
 import axios from "axios";
 import {ListGroup} from "react-bootstrap";
-import {v4 as uuid} from 'uuid';
+import {API_URL} from "../../constants";
 
 
 class FetchedTaskList extends React.Component {
     constructor(props) {
         super(props);
-        this.isMount = false;
 
         this.state = {
             tasks: [],
@@ -16,19 +15,28 @@ class FetchedTaskList extends React.Component {
     }
 
     componentDidMount = () => {
-        if (!this.isMount) {
-            this.isMount = true;
-            // Add an event listener for keyboard events
-            window.addEventListener('keydown', this.handleKeyDown);
-            // fetch the tasks from django api
-            this.fetchData();
-        }
+        // Add an event listener for keyboard events
+        window.addEventListener('keydown', this.handleKeyDown);
+        // fetch the data using axios
+        this.getTasks();
     };
 
     // Remove the event listener when the component unmounts
     componentWillUnmount = () => {
         window.removeEventListener('keydown', this.handleKeyDown);
     }
+
+    // send a get request the fetch the updated list of tasks
+    getTasks = () => {
+        axios.get(API_URL).then(res => this.setState({
+            tasks: res.data.results
+        }));
+    };
+
+    // reset state after certain actions
+    resetState = () => {
+        this.getTasks();
+    };
 
     // This function will be called whenever a keyboard event occurs
     handleKeyDown = (event) => {
@@ -39,9 +47,9 @@ class FetchedTaskList extends React.Component {
         }
     }
 
-    dragStart(event, id) {
+    dragStart(event, index) {
         // remember source tasks id
-        event.dataTransfer.setData('id', id);
+        event.dataTransfer.setData('index', index);
     };
 
     dragOver(event) {
@@ -49,30 +57,58 @@ class FetchedTaskList extends React.Component {
         event.preventDefault();
     };
 
-    drop = (event, targetId) => {
-        // get initial task's id
-        const id = event.dataTransfer.getData('id');
-        // shallow copy the tasks list
-        const tasksCopy = [...this.state.tasks];
-        // find source index in order to get the task to move
-        const sourceIndex = tasksCopy.findIndex((item) => item.id === parseInt(id));
-        // find target index so that we can place the source task in the right place
-        const targetIndex = tasksCopy.findIndex((item) => item.id === targetId);
-        // splice the task from the source index
-        const [removed] = tasksCopy.splice(sourceIndex, 1);
-        // use again the splice method to inject our task in the right index
-        tasksCopy.splice(targetIndex, 0, removed);
-        // set state to finalize
-        this.setState({
-            tasks: tasksCopy,
-        });
+    drop = async (event, targetIndex) => {
+        // Get the source index and task
+        const sourceIndex = parseInt(event.dataTransfer.getData('index'));
+        const tasks = this.state.tasks;
+        const sourceTask = tasks.find(task => task.index === sourceIndex);
+        const targetTask = tasks.find(task => task.index === targetIndex);
+        if (sourceTask.isCompleted !== targetTask.isCompleted) {
+            return
+        }
+        try {
+            await axios.all([
+                    this.state.tasks.map(task => {
+                        if (targetIndex > sourceIndex && task.index > sourceIndex && task.index <= targetIndex) {
+                            return axios.put(`${API_URL}${task.id}/`, {index: task.index - 1});
+                        } else if (targetIndex < sourceIndex && task.index < sourceIndex && task.index >= targetIndex) {
+                            return axios.put(`${API_URL}${task.id}/`, {index: task.index + 1});
+                        } else {
+                            return null
+                        }
+                    }),
+                    axios.put(`${API_URL}${sourceTask.id}/`, {index: targetIndex}),
+                ]
+            ).then(() => {
+                this.resetState();
+            })
+        } catch (error) {
+            // Handle any errors that may have occurred during the API requests
+            console.error(error);
+        } finally {
+            this.resetState();
+        }
     };
 
-    terminateTask = (id) => {
-        // remove the task by filtering the tasks
-        const tasks = this.state.tasks.filter((t) => t.id !== id);
-        // set back the tasks in state
-        this.setState({tasks});
+    deleteTask = async (id) => {
+        const removedIndex = this.state.tasks.find(task => task.id === id).index;
+        try {
+            await axios.all([
+                this.state.tasks.map(task => {
+                    if (task.index > removedIndex) {
+                        return axios.put(`${API_URL}${task.id}/`, {index: task.index - 1})
+                    } else {
+                        return null
+                    }
+                }),
+                axios.delete(`${API_URL}${id}/`),
+            ]);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            this.resetState();
+        }
+
     };
 
     handleSubmit = (event) => {
@@ -88,74 +124,41 @@ class FetchedTaskList extends React.Component {
     };
 
     toggleCheckbox(event, id) {
-        const element = event.target;
         // Find the task with the specified id in the tasks list
         const task = this.state.tasks.find(task => task.id === id);
-        // If the task was found, toggle its 'completed' property
-        if (task) {
-            task.isCompleted = !task.isCompleted;
-        }
-
-        // Find the closest parent element with the 'li' tag
-        const listItem = element.closest("li");
-        // Toggle the 'completed' class on the list item
-        listItem.classList.toggle('completed');
-
-        const sortedTasks = this.state.tasks.sort((a, b) => {
-            if (a.isCompleted && !b.isCompleted) {
-                return 1;
-            } else if (!a.isCompleted && b.isCompleted) {
-                return -1;
-            }
-            return 0;
-        });
-        this.setState({
-            tasks: sortedTasks,
+        // send put request to update task
+        axios.put(`${API_URL}${id}/`, {
+            isCompleted: !task.isCompleted,
+        }).then(() => {
+            this.resetState();
         });
     };
 
     addTask = () => {
         if (this.state.newTaskDescription.length) {
-            // shallow copy of the tasks list
-            const tasksCopy = [...this.state.tasks];
-
-            axios.post("http://127.0.0.1:8000/tasks/", {
+            axios.post(API_URL, {
                 description: this.state.newTaskDescription,
-            })
-                .then((res) => {
-                    this.setState({
-                        newTaskDescription: "",
-                    });
-                })
-                .catch((err) => {
+                index: (this.state.tasks.length + 1),
+            }).then(() => {
+                this.setState({
+                    newTaskDescription: "",
                 });
-            const newTask = {
-                id: uuid(),
-                description: this.state.newTaskDescription,
-            };
-            // add the new task to the tasks list
-            tasksCopy.unshift(newTask);
-            // update the state with the new tasks list
-            this.setState({
-                tasks: tasksCopy,
-                newTaskDescription: '',
+                this.resetState();
             });
         }
     }
 
-    fetchData() {
-
-        let data;
-        axios.get('http://127.0.0.1:8000/tasks/').then(res => {
-            data = res.data.results;
-            this.setState({
-                tasks: data
-            });
-        });
-    }
-
     render() {
-        const tasks = this.state.tasks;
+        const tasksPrioritized = this.state.tasks.sort((a, b) => b.index - a.index);
+        const tasksSorted = tasksPrioritized.sort((a, b) => {
+            if (a.isCompleted === b.isCompleted) {
+                return 0;
+            }
+            if (a.isCompleted) {
+                return 1;
+            }
+            return -1;
+        });
         return (
             <>
                 <div className="page-content page-container" id="page-content">
@@ -180,26 +183,28 @@ class FetchedTaskList extends React.Component {
                                         <div className="list-wrapper">
                                             <ul className="d-flex flex-column-reverse todo-list">
                                                 <ListGroup>
-                                                    {tasks.map((task) => (
+                                                    {tasksSorted.map((task) => (
                                                         <ListGroup.Item
                                                             key={task.id}
                                                             draggable
-                                                            onDragStart={(event) => this.dragStart(event, task.id)}
+                                                            onDragStart={(event) => this.dragStart(event, task.index)}
                                                             onDragOver={this.dragOver}
-                                                            onDrop={(event) => this.drop(event, task.id)}
+                                                            onDrop={(event) => this.drop(event, task.index)}
                                                         >
-                                                            <li key={task.id}>
+                                                            <li key={task.id}
+                                                                className={(task.isCompleted ? 'completed' : '')}>
                                                                 <div className="form-check">
                                                                     <label className="form-check-label">
                                                                         <input className="checkbox"
                                                                                type="checkbox"
+                                                                               checked={task.isCompleted}
                                                                                onChange={(event) => this.toggleCheckbox(event, task.id)}
                                                                         />
                                                                         {task.description}
                                                                         <i className="input-helper"></i></label>
                                                                 </div>
                                                                 <div className="button-wrapper">
-                                                                    <i onClick={() => this.terminateTask(task.id)}
+                                                                    <i onClick={() => this.deleteTask(task.id)}
                                                                        className="fa fa-trash fa-lg delete-task-button"
                                                                        aria-hidden="true">
                                                                     </i>
