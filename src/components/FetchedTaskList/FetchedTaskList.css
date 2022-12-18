@@ -4,6 +4,10 @@
     margin-bottom: 10px;
 }
 
+.todo-list-input {
+    min-width: 400px;
+}
+
 #task-description {
     width: 500px;
     height: 100px;
