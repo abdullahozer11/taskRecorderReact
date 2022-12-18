@@ -77,7 +77,7 @@ class TaskList extends Component {
         });
     };
 
-    terminateTask = (id) => {
+    deleteTask = (id) => {
         // remove the task by filtering the tasks
         const tasks = this.state.tasks.filter((t) => t.id !== id);
         // set back the tasks in state
@@ -189,7 +189,7 @@ class TaskList extends Component {
                                                                         <i className="input-helper"></i></label>
                                                                 </div>
                                                                 <div className="button-wrapper">
-                                                                    <i onClick={() => this.terminateTask(task.id)}
+                                                                    <i onClick={() => this.deleteTask(task.id)}
                                                                        className="fa fa-trash fa-lg delete-task-button"
                                                                        aria-hidden="true">
                                                                     </i>
