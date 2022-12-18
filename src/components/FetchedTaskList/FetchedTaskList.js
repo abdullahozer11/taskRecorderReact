@@ -1,7 +1,10 @@
 import React from "react";
+
 import axios from "axios";
 import {ListGroup} from "react-bootstrap";
+
 import {API_URL} from "../../constants";
+import './FetchedTaskList.css';
 
 
 class FetchedTaskList extends React.Component {
@@ -47,9 +50,9 @@ class FetchedTaskList extends React.Component {
         }
     }
 
-    dragStart(event, index) {
+    dragStart(event, id) {
         // remember source tasks id
-        event.dataTransfer.setData('index', index);
+        event.dataTransfer.setData('id', id);
     };
 
     dragOver(event) {
@@ -57,78 +60,48 @@ class FetchedTaskList extends React.Component {
         event.preventDefault();
     };
 
-    drop = async (event, targetIndex) => {
-        // Get the source index and task
-        const sourceIndex = parseInt(event.dataTransfer.getData('index'));
-        const tasks = this.state.tasks;
-        const sourceTask = tasks.find(task => task.index === sourceIndex);
-        const targetTask = tasks.find(task => task.index === targetIndex);
-        if (sourceTask.isCompleted !== targetTask.isCompleted) {
-            return
-        }
-        try {
-            await axios.all([
-                    this.state.tasks.map(task => {
-                        if (targetIndex > sourceIndex && task.index > sourceIndex && task.index <= targetIndex) {
-                            return axios.put(`${API_URL}${task.id}/`, {index: task.index - 1});
-                        } else if (targetIndex < sourceIndex && task.index < sourceIndex && task.index >= targetIndex) {
-                            return axios.put(`${API_URL}${task.id}/`, {index: task.index + 1});
-                        } else {
-                            return null
-                        }
-                    }),
-                    axios.put(`${API_URL}${sourceTask.id}/`, {index: targetIndex}),
-                ]
-            ).then(() => {
-                this.resetState();
-            })
-        } catch (error) {
-            // Handle any errors that may have occurred during the API requests
-            console.error(error);
-        } finally {
-            this.resetState();
-        }
+    drop = (event, targetId) => {
+        // get initial task's id
+        const id = event.dataTransfer.getData('id');
+        // shallow copy the tasks list
+        const tasksCopy = [...this.state.tasks];
+        // find source index in order to get the task to move
+        const sourceIndex = tasksCopy.findIndex((item) => item.id === parseInt(id));
+        // find target index so that we can place the source task in the right place
+        const targetIndex = tasksCopy.findIndex((item) => item.id === targetId);
+        // splice the task from the source index
+        const [removed] = tasksCopy.splice(sourceIndex, 1);
+        // use again the splice method to inject our task in the right index
+        tasksCopy.splice(targetIndex, 0, removed);
+        // set state to finalize
+        this.setState({
+            tasks: tasksCopy,
+        });
     };
 
-    deleteTask = async (id) => {
-        const removedIndex = this.state.tasks.find(task => task.id === id).index;
-        try {
-            await axios.all([
-                this.state.tasks.map(task => {
-                    if (task.index > removedIndex) {
-                        return axios.put(`${API_URL}${task.id}/`, {index: task.index - 1})
-                    } else {
-                        return null
-                    }
-                }),
-                axios.delete(`${API_URL}${id}/`),
-            ]);
-        } catch (error) {
-            console.error(error);
-        } finally {
+    deleteTask = (id) => {
+        axios.delete(`${API_URL}${id}/`).then(() => {
             this.resetState();
-        }
-
+        })
     };
 
     handleSubmit = (event) => {
         // prevent default form submission behavior
         event.preventDefault();
-
         this.addTask();
     };
 
     handleTaskDescriptionChange = (event) => {
         // Update the value of the taskDescription state property with the value from the input field
-        this.setState({newTaskDescription: event.target.value});
+        this.setState({
+            newTaskDescription: event.target.value
+        });
     };
 
-    toggleCheckbox(event, id) {
-        // Find the task with the specified id in the tasks list
-        const task = this.state.tasks.find(task => task.id === id);
+    toggleCheckbox = async (event, id, isCompleted) => {
         // send put request to update task
         axios.put(`${API_URL}${id}/`, {
-            isCompleted: !task.isCompleted,
+            isCompleted: !isCompleted,
         }).then(() => {
             this.resetState();
         });
@@ -138,7 +111,6 @@ class FetchedTaskList extends React.Component {
         if (this.state.newTaskDescription.length) {
             axios.post(API_URL, {
                 description: this.state.newTaskDescription,
-                index: (this.state.tasks.length + 1),
             }).then(() => {
                 this.setState({
                     newTaskDescription: "",
@@ -149,16 +121,7 @@ class FetchedTaskList extends React.Component {
     }
 
     render() {
-        const tasksPrioritized = this.state.tasks.sort((a, b) => b.index - a.index);
-        const tasksSorted = tasksPrioritized.sort((a, b) => {
-            if (a.isCompleted === b.isCompleted) {
-                return 0;
-            }
-            if (a.isCompleted) {
-                return 1;
-            }
-            return -1;
-        });
+        const tasks = this.state.tasks;
         return (
             <>
                 <div className="page-content page-container" id="page-content">
@@ -183,13 +146,13 @@ class FetchedTaskList extends React.Component {
                                         <div className="list-wrapper">
                                             <ul className="d-flex flex-column-reverse todo-list">
                                                 <ListGroup>
-                                                    {tasksSorted.map((task) => (
+                                                    {tasks.map((task) => (
                                                         <ListGroup.Item
                                                             key={task.id}
                                                             draggable
-                                                            onDragStart={(event) => this.dragStart(event, task.index)}
+                                                            onDragStart={(event) => this.dragStart(event, task.id)}
                                                             onDragOver={this.dragOver}
-                                                            onDrop={(event) => this.drop(event, task.index)}
+                                                            onDrop={(event) => this.drop(event, task.id)}
                                                         >
                                                             <li key={task.id}
                                                                 className={(task.isCompleted ? 'completed' : '')}>
@@ -197,8 +160,7 @@ class FetchedTaskList extends React.Component {
                                                                     <label className="form-check-label">
                                                                         <input className="checkbox"
                                                                                type="checkbox"
-                                                                               checked={task.isCompleted}
-                                                                               onChange={(event) => this.toggleCheckbox(event, task.id)}
+                                                                               onChange={(event) => this.toggleCheckbox(event, task.id, task.isCompleted)}
                                                                         />
                                                                         {task.description}
                                                                         <i className="input-helper"></i></label>
