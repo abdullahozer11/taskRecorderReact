@@ -1,10 +1,10 @@
 import './App.css';
-import FetchedTaskList from "./components/FetchedTaskList/FetchedTaskList";
+import TaskList from "./components/TaskList/TaskList";
 
 function App() {
     return (
         <div className="App">
-            <FetchedTaskList/>
+            <TaskList/>
         </div>
     );
 }

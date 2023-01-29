@@ -21,7 +21,7 @@ class TaskList extends Component {
                 },
                 {
                     id: 3,
-                    desc: "Dune needs to be finished. Read the damn book.",
+                    desc: "Read a book (example: Dune 1965).",
                     isCompleted: false,
                 },
             ],
