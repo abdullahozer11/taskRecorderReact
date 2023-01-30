@@ -148,60 +148,54 @@ class TaskList extends Component {
         const tasks = this.state.tasks;
         return (
             <>
-                <div className="page-content page-container" id="page-content">
-                    <div className="padding">
-                        <div className="row container d-flex justify-content-center">
-                            <div className="col-md-12">
-                                <div className="card px-3">
-                                    <div className="card-body">
-                                        <h4 className="card-title">Task List</h4>
-                                        <div className="add-items d-flex">
-                                            <input type="text"
-                                                   className="form-control todo-list-input"
-                                                   placeholder="What do you need to do today?"
-                                                   onChange={this.handleTaskDescriptionChange}
-                                                   value={this.state.newTaskDescription}
-                                            />
-                                            <button
-                                                onClick={this.handleSubmit}
-                                                className="add btn btn-primary font-weight-bold todo-list-add-btn">Add
-                                            </button>
-                                        </div>
-                                        <div className="list-wrapper">
-                                            <ul className="d-flex flex-column-reverse todo-list">
-                                                <ListGroup>
-                                                    {tasks.map((task) => (
-                                                        <ListGroup.Item
-                                                            key={task.id}
-                                                            draggable
-                                                            onDragStart={(event) => this.dragStart(event, task.id)}
-                                                            onDragOver={this.dragOver}
-                                                            onDrop={(event) => this.drop(event, task.id)}
-                                                        >
-                                                            <li key={task.id}>
-                                                                <div className="form-check">
-                                                                    <label className="form-check-label">
-                                                                        <input className="checkbox"
-                                                                               type="checkbox"
-                                                                               onChange={(event) => this.toggleCheckbox(event, task.id)}
-                                                                        />
-                                                                        {task.desc}
-                                                                        <i className="input-helper"></i></label>
-                                                                </div>
-                                                                <div className="button-wrapper">
-                                                                    <i onClick={() => this.deleteTask(task.id)}
-                                                                       className="fa fa-trash fa-lg delete-task-button"
-                                                                       aria-hidden="true">
-                                                                    </i>
-                                                                </div>
-                                                            </li>
-                                                        </ListGroup.Item>
-                                                    ))}
-                                                </ListGroup>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+                <div className="container">
+                    <div className="card px-3">
+                        <div className="card-body">
+                            <h4 className="card-title">Task List</h4>
+                            <div className="add-items d-flex">
+                                <input type="text"
+                                       className="form-control todo-list-input"
+                                       placeholder="What do you need to do today?"
+                                       onChange={this.handleTaskDescriptionChange}
+                                       value={this.state.newTaskDescription}
+                                />
+                                <button
+                                    onClick={this.handleSubmit}
+                                    className="add btn btn-primary font-weight-bold todo-list-add-btn">Add
+                                </button>
+                            </div>
+                            <div className="list-wrapper">
+                                <ul className="d-flex flex-column-reverse todo-list">
+                                    <ListGroup>
+                                        {tasks.map((task) => (
+                                            <ListGroup.Item
+                                                key={task.id}
+                                                draggable
+                                                onDragStart={(event) => this.dragStart(event, task.id)}
+                                                onDragOver={this.dragOver}
+                                                onDrop={(event) => this.drop(event, task.id)}
+                                            >
+                                                <li key={task.id}>
+                                                    <div className="form-check">
+                                                        <label className="form-check-label">
+                                                            <input className="checkbox"
+                                                                   type="checkbox"
+                                                                   onChange={(event) => this.toggleCheckbox(event, task.id)}
+                                                            />
+                                                            {task.desc}
+                                                            <i className="input-helper"></i></label>
+                                                    </div>
+                                                    <div className="button-wrapper">
+                                                        <i onClick={() => this.deleteTask(task.id)}
+                                                           className="fa fa-trash fa-lg delete-task-button"
+                                                           aria-hidden="true">
+                                                        </i>
+                                                    </div>
+                                                </li>
+                                            </ListGroup.Item>
+                                        ))}
+                                    </ListGroup>
+                                </ul>
                             </div>
                         </div>
                     </div>
