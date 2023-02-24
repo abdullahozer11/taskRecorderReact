@@ -52,9 +52,7 @@ class TaskList extends Component {
 
     toggleCheckbox(event, desc) {
         const copyTasks = [...this.state.tasks];
-        console.log(copyTasks);
         const index = copyTasks.findIndex((item) => item.desc === desc);
-        console.log(index);
         copyTasks[index].isCompleted = event.target.checked;
         this.setState({
             tasks: copyTasks,
