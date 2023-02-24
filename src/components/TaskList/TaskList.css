@@ -51,12 +51,11 @@ input[type="checkbox"] {
     font: inherit;
     font-size: 1em;
     width: 1em;
-    height: 1em;
 }
 
 #todo-list > li {
     display: grid;
-    grid-template-columns: 10% 1fr 5%;
+    grid-template-columns: 10% 1fr 10%;
     gap: 1em;
     font-size: 1em;
     text-shadow: 0 0 0.05em black;
@@ -76,4 +75,16 @@ input[type="checkbox"] {
 li > a {
     width: 1em;
     height: 1em;
+}
+
+.trash-icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin: auto;
+}
+.trash-icon > svg {
+    width: 100%;
+    height: 100%;
+    display: inherit;
 }
