@@ -31,9 +31,9 @@ class TaskList extends Component {
         }
     }
 
-    deleteTask = (desc) => {
+    deleteTask = (id) => {
         const copyTasks = [...this.state.tasks];
-        const index = copyTasks.findIndex((item) => item.desc === desc);
+        const index = copyTasks.findIndex((item) => item.id === id);
         copyTasks.splice(index, 1);
         this.setState({
             tasks: copyTasks,
@@ -50,9 +50,9 @@ class TaskList extends Component {
         this.setState({newTaskDescription: event.target.value});
     };
 
-    toggleCheckbox(event, desc) {
+    toggleCheckbox(event, id) {
         const copyTasks = [...this.state.tasks];
-        const index = copyTasks.findIndex((item) => item.desc === desc);
+        const index = copyTasks.findIndex((item) => item.id === id);
         copyTasks[index].isCompleted = event.target.checked;
         this.setState({
             tasks: copyTasks,
@@ -63,7 +63,8 @@ class TaskList extends Component {
         const newTaskDescription = this.state.newTaskDescription;
         if (newTaskDescription) {
             const newTask = {
-                desc: newTaskDescription,
+                id: Date.now(),
+                description: newTaskDescription,
                 isCompleted: false,
             };
             const copyTasks = [...this.state.tasks];
@@ -75,27 +76,6 @@ class TaskList extends Component {
             window.localStorage.setItem('tasks', JSON.stringify(copyTasks));
         }
     };
-
-    dragStart = (event, desc) => {
-        event.dataTransfer.setData('desc', desc);
-    }
-
-    dragOver = (event) => {
-        event.preventDefault();
-    }
-
-    drop = (event, desc) => {
-        const copyTasks = [...this.state.tasks];
-        const dragDesc = event.dataTransfer.getData('desc');
-        const dragIndex = copyTasks.findIndex((item) => item.desc === dragDesc);
-        const dropIndex = copyTasks.findIndex((item) => item.desc === desc);
-        const dragTask = copyTasks[dragIndex];
-        copyTasks.splice(dragIndex, 1);
-        copyTasks.splice(dropIndex, 0, dragTask);
-        this.setState({
-            tasks: copyTasks,
-        });
-    }
 
     render() {
         const tasks = this.state.tasks;
@@ -114,16 +94,13 @@ class TaskList extends Component {
                     <div className="todo-list">
                         <ul id="todo-list">
                             {tasks.map((task) => (
-                                <li key={task.desc} draggable="true"
-                                    onDragStart={(event) => this.dragStart(event, task.desc)}
-                                    onDragOver={(event) => this.dragOver(event)}
-                                    onDrop={(event) => this.drop(event, task.desc)}>
-                                    <input type="checkbox" id={task.desc}
-                                           onChange={(event) => this.toggleCheckbox(event, task.desc)}/>
-                                    <label htmlFor={task.desc}>{task.desc}</label>
+                                <li key={task.id} draggable="true">
+                                    <input type="checkbox" id={task.id}
+                                           onChange={(event) => this.toggleCheckbox(event, task.id)}/>
+                                    <label htmlFor={task.id}>{task.description}</label>
                                     <a className="trash-icon" href="" onClick={(event) => {
                                         event.preventDefault();
-                                        this.deleteTask(task.desc);
+                                        this.deleteTask(task.id);
                                     }}>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width={"20"} height={"20"}>
                                             <path
