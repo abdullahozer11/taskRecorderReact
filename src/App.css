@@ -6,8 +6,11 @@
 }
 
 
+/*noinspection CssOverwrittenProperties,CssInvalidPropertyValue*/
 .App {
+    height: 100vh;
     height: 100dvh;
+    height: 100svh;
     width: 100vw;
     background: linear-gradient(45deg, brown, crimson, chocolate, coral, gold);
     background-size: 200% 100%;
