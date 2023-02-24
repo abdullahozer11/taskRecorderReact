@@ -1,217 +1,79 @@
-.delete-task-button {
-    margin-left: 1rem;
+.content {
+    flex-grow: 1;
 }
 
-.button-wrapper {
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
+.header {
+    display: flex;
+    margin-bottom: 2em;
 }
 
-.delete-task-button:hover {
-    color: #fa0d0d;
-    transform: scale(1.3) perspective(1px)
+.header > h1 {
+    font-size: 7rem;
 }
 
-.d-flex {
-    display: flex !important
+.footer {
+    font-size: 1.5rem;
+    display: flex;
 }
 
-.add-items .btn {
-    margin-left: .5rem
+.header > h1 {
+    align-self: center;
 }
 
-.btn {
-    font-size: 0.875rem;
-    line-height: 1;
-    font-weight: 400;
-    padding: .7rem 1.5rem;
-    border-radius: 0.1275rem
+.content {
+    font-size: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-self: flex-start;
 }
 
-.add-items {
-    margin-bottom: 1.5rem;
-    overflow: hidden
-}
-
-.add-items input[type="text"] {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    width: 100%;
-    background: transparent
-}
-
-.list-wrapper ul li .form-check label:hover {
-    cursor: pointer
-}
-
-.list-wrapper .completed {
-    text-decoration: line-through;
-    text-decoration-color: #3da5f4
-}
-
-.list-wrapper ul li .form-check {
-    max-width: 90%;
-    margin-top: .25rem;
-    margin-bottom: .25rem
-}
-
-.form-check {
-    position: relative;
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding-left: 0
-}
-
-.list-wrapper ul li .form-check, .list-wrapper ul li .form-check .form-check-label, .email-wrapper .mail-sidebar .menu-bar .profile-list-item a .user .u-name, .email-wrapper .mail-sidebar .menu-bar .profile-list-item a .user .u-designation, .email-wrapper .mail-list-container .mail-list .content .sender-name, .email-wrapper .message-body .attachments-sections ul li .details p.file-name, .settings-panel .chat-list .list .info p {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    max-width: 100%;
-}
-
-.form-check .form-check-label {
-    min-height: 18px;
-    display: block;
-    margin-left: 1.75rem;
-    font-size: 0.875rem;
-    line-height: 1.5
-}
-
-.form-check-label {
-    margin-bottom: 0
-}
-
-.list-wrapper input[type="checkbox"] {
-    margin-right: 15px
-}
-
-.form-check .form-check-label input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: 0;
-    margin-top: 0;
-    z-index: 1;
+.input > button {
+    border: none;
+    font-size: 1em;
+    height: 2.5em;
+    width: 4em;
     cursor: pointer;
-    opacity: 0;
-    filter: alpha(opacity=0)
+    background-color: snow;
 }
 
-input[type="radio"], input[type="checkbox"] {
-    box-sizing: border-box;
-    padding: 0
+.content > .input > input {
+    font-size: 1em;
+    height: 2.5em;
+    border: none;
 }
 
-.form-check .form-check-label input[type="checkbox"] + .input-helper:before {
-    content: "";
-    width: 18px;
-    height: 18px;
-    border-radius: 2px;
-    border: solid #405189;
-    border-width: 2px;
-    -webkit-transition: all;
-    -moz-transition: all;
-    -ms-transition: all;
-    -o-transition: all;
-    transition: all;
-    transition-duration: 0s;
-    -webkit-transition-duration: 0ms;
-    transition-duration: 0ms
+#todo-list {
+    list-style-type: none;
 }
 
-.form-check .form-check-label input[type="checkbox"] + .input-helper:before, .form-check .form-check-label input[type="checkbox"] + .input-helper:after {
-    position: absolute;
-    top: 0;
-    left: 0
+input[type="checkbox"] {
+    font: inherit;
+    font-size: 1em;
+    width: 1em;
+    height: 1em;
 }
 
-.form-check .form-check-label input[type="checkbox"] + .input-helper:after {
-    -webkit-transition: all;
-    -moz-transition: all;
-    -ms-transition: all;
-    -o-transition: all;
-    transition: all;
-    transition-duration: 0s;
-    -webkit-transition-duration: 0ms;
-    transition-duration: 0ms;
-    font-family: Material Design Icons;
-    opacity: 0;
-    filter: alpha(opacity=0);
-    -webkit-transform: scale(0);
-    -ms-transform: scale(0);
-    -o-transform: scale(0);
-    transform: scale(0);
-    content: '\F12C';
-    font-size: .9375rem;
-    font-weight: bold;
-    color: #ffffff
+#todo-list > li {
+    display: grid;
+    grid-template-columns: 10% 1fr 5%;
+    gap: 1em;
+    font-size: 1em;
+    text-shadow: 0 0 0.05em black;
+    margin-top: 0.5em;
+    width: 100%;
 }
 
-.form-check .form-check-label input[type="checkbox"]:checked + .input-helper:before {
-    background: #405189;
-    border-width: 0
+.input {
+    display: flex;
+    gap: 0.3em;
 }
 
-.form-check .form-check-label input[type="checkbox"] + .input-helper:before {
-    content: "";
-    width: 18px;
-    height: 18px;
-    border-radius: 2px;
-    border: solid #405189;
-    border-width: 2px;
-    -webkit-transition: all;
-    -moz-transition: all;
-    -ms-transition: all;
-    -o-transition: all;
-    transition: all;
-    transition-duration: 0s;
-    -webkit-transition-duration: 0ms;
-    transition-duration: 0ms
+.footer > p {
+    margin: auto;
 }
 
-.form-check .form-check-label input[type="checkbox"] + .input-helper:after {
-    font-family: FontAwesome;
-    content: "\f095";
-    display: inline-block;
-    padding-right: 3px;
-    vertical-align: middle;
-    color: #fff
-}
-
-.text-primary, .list-wrapper .completed .remove {
-    color: #405189 !important
-}
-
-.list-wrapper ul li {
-    font-size: .9375rem;
-    padding: .4rem 0;
-    border-bottom: 1px solid #f3f3f3
-}
-
-.list-wrapper ul {
-    padding: 0;
-    text-align: left;
-    list-style: none;
-    margin-bottom: 0
-}
-
-.d-flex, .loader-demo-box, .distribution-chart-legend .distribution-chart, .distribution-chart-legend .distribution-chart .item, .list-wrapper ul li, .email-wrapper .mail-sidebar .menu-bar .profile-list-item a, .email-wrapper .mail-sidebar .menu-bar .profile-list-item a .user, .email-wrapper .mail-list-container .mail-list .details, .email-wrapper .message-body .attachments-sections ul li .thumb, .email-wrapper .message-body .attachments-sections ul li .details .buttons, .lightGallery .image-tile .demo-gallery-poster, .swal2-modal, .navbar .navbar-menu-wrapper .navbar-nav, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-profile, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .navbar-dropdown .dropdown-item {
-    display: flex !important
-}
-
-.container {
-    margin-top: 10em;
-}
-
-@media (orientation: landscape) {
-    .card-body {
-        margin: auto;
-    }
-}
-
-@media (orientation: portrait) {
-    .form-check-label {
-        font-size: 0.6rem;
-    }
+li > a {
+    width: 1em;
+    height: 1em;
 }
