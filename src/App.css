@@ -19,10 +19,10 @@
     display: grid;
     grid-template-rows: 1fr 5vh;
     justify-content: center;
-    align-items: center;
     flex-direction: column;
     min-height: 500px;
     min-width: 300px;
+    padding-top: 20vh;
 }
 
 html {

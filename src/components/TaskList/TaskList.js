@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 
 import './TaskList.css';
+import { v4 as uuidv4 } from 'uuid';
 
 class TaskList extends Component {
     constructor(props) {
@@ -63,7 +64,7 @@ class TaskList extends Component {
         const newTaskDescription = this.state.newTaskDescription;
         if (newTaskDescription) {
             const newTask = {
-                id: Date.now(),
+                id: uuidv4(),
                 description: newTaskDescription,
                 isCompleted: false,
             };
