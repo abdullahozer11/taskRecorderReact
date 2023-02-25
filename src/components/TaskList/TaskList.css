@@ -68,11 +68,6 @@ input[type="checkbox"] {
     width: 100%;
     border-radius: 0.5em;
     padding: 0.2em 0.5em;
-    background: linear-gradient(45deg, snow, lightgray, whitesmoke);
-    background-size: 200% 100%;
-    background-position: left;
-    animation: bg-task 4s linear infinite alternate;
-    background-blend-mode: color-burn;
 }
 
 @keyframes bg-task {

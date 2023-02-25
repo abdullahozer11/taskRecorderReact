@@ -69,7 +69,7 @@ class TaskList extends Component {
                 isCompleted: false,
             };
             const copyTasks = [...this.state.tasks];
-            copyTasks.push(newTask);
+            copyTasks.unshift(newTask);
             this.setState({
                 tasks: copyTasks,
                 newTaskDescription: '',
@@ -93,7 +93,7 @@ class TaskList extends Component {
                         <button id="add" onClick={this.addTask}>Add</button>
                     </div>
                     <div className="todo-list">
-                        <ul id="todo-list">
+                        <ul className="tasks">
                             {tasks.map((task) => (
                                 <li key={task.id} draggable="true">
                                     <input type="checkbox" id={task.id}
