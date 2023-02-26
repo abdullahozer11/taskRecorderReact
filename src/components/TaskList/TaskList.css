@@ -22,6 +22,10 @@ ol, ul {
     display: flex;
 }
 
+.container {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
 .content {
     font-size: 2.5rem;
     display: flex;
