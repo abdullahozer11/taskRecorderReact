@@ -95,7 +95,7 @@ class TaskList extends Component {
                     <div className="todo-list">
                         <ul className="tasks">
                             {tasks.map((task) => (
-                                <li key={task.id} draggable="true">
+                                <li key={task.id}>
                                     <input type="checkbox" id={task.id}
                                            onChange={(event) => this.toggleCheckbox(event, task.id)}/>
                                     <label htmlFor={task.id}>{task.description}</label>
